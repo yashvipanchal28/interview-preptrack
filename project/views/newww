@@ -1,0 +1,122 @@
+-- drop database assignment04;
+create database assignment04;
+use assignment04;
+SET GLOBAL local_infile=1;
+
+create table course ( cid varchar(20) primary key,
+						cname varchar(100),
+                        l int,
+                        t int, 
+                        p int,
+                        c int
+                        );
+
+create table course_coordinator ( cid varchar(20) primary key,
+						cstart varchar(20),
+                        cend varchar(20),
+                        gsubmission varchar(20),
+                        coordinator varchar(100),
+                        exam_date varchar(100) 
+                        );
+
+create table course_eligibility ( cid varchar(20) not null,
+						program varchar(100),
+                        batch_year varchar(40),
+                        batch_month varchar(50),
+                        eligibility varchar(500)
+                        );
+
+create table course_instructor ( cid varchar(50),
+						instructor varchar(500)
+                        );
+
+create table faculty ( dept varchar(100),
+					instructor varchar(500)
+);
+
+LOAD DATA INFILE 'assign4/course.csv'  
+INTO TABLE course
+FIELDS TERMINATED BY '#'
+LINES terminated BY '\n' ;
+
+LOAD DATA INFILE 'assign4/course_coordinator.csv'  
+INTO TABLE course_coordinator
+FIELDS TERMINATED BY '#'
+LINES terminated BY '\n' ;
+
+LOAD DATA INFILE 'assign4/course_eligibility.csv'  
+INTO TABLE course_eligibility
+FIELDS TERMINATED BY '#'
+LINES terminated BY '\n' ;
+
+LOAD DATA INFILE 'assign4/course_instructor.csv'  
+INTO TABLE course_instructor
+FIELDS TERMINATED BY '#'
+LINES terminated BY '\n' ;
+
+LOAD DATA INFILE 'assign4/faculty.csv'  
+INTO TABLE faculty
+FIELDS TERMINATED BY '#'
+LINES terminated BY '\n' ;
+
+-- task4
+-- Q1
+SELECT course.cname,course_coordinator.gsubmission FROM course,course_coordinator WHERE course.cid=course_coordinator.cid AND course_coordinator.cid IN (SELECT course.cid FROM course);
+
+SELECT course.cname,course_coordinator.gsubmission FROM course,course_coordinator WHERE EXISTS (SELECT * FROM course WHERE course.cid=course_coordinator.cid) AND course.cid=course_coordinator.cid ;
+
+-- Q2
+SELECT DISTINCT ce.cid FROM course_eligibility AS ce
+where exists( select * from
+(SELECT * FROM course_eligibility WHERE cid='BT206'
+) as BT
+WHERE ce.program=BT.program AND ce.batch_year=BT.batch_year AND ce.batch_month=BT.batch_month AND ce.eligibility=BT.eligibility AND ce.cid<>BT.cid);
+
+-- Q3
+create view courseView as select cid,gsubmission,coordinator from course_coordinator;
+
+-- Q4
+insert into courseView values('CS100','28 May 2021','CSE Faculty');
+/* select * from courseView where coordinator='CSE Faculty'; */
+ 
+-- Q5
+create view tab2 as
+select course_coordinator.cid,instructor,coordinator from course_instructor join course_coordinator on course_coordinator.cid=course_instructor.cid;
+/* select * from tab2; */
+
+-- Q6
+INSERT INTO tab2(cid,instructor) VALUES ('CS100','CSE Faculty');
+INSERT INTO tab2(cid,coordinator) VALUES ('CS100','CSE Faculty');
+
+-- Q7
+
+SELECT data2.a
+FROM
+	(SELECT data1.a, min(m1) AS mincnt
+	FROM 
+		(SELECT instructor as a, COUNT(*) as m1
+		FROM course_instructor
+		GROUP BY a
+		UNION ALL 
+		SELECT coordinator as a, COUNT(*) as m1
+		FROM course_coordinator
+		GROUP BY a) AS data1
+	GROUP BY data1.a
+	HAVING COUNT(*) > 1) AS data2;
+
+-- Q8
+create table new_programs(cid varchar(20), frequency int);
+
+delimiter |
+create trigger Trigg1
+after insert
+on course_eligibility
+for each row
+begin
+if new.cid in (select cid from new_programs) then
+	update new_programs set frequency = frequency + 1 where cid = new.cid;
+else
+	insert into new_programs value (new.cid, 1);
+end if;
+end; |
+delimiter ;

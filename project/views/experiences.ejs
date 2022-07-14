@@ -1,0 +1,115 @@
+<%- include('partials/header'); -%>
+    <h2>
+        <%=data.toUpperCase()%>
+    </h2>
+    </br>
+
+    <% if (experiences.length> 0) { %>
+        <% experiences.forEach(experience=> { %>
+
+            <button class="collapsible">
+                <div style="display: flex;
+                    align-items: left;
+                    justify-content: left;">
+
+                    <img style="object-fit: cover; height: 100px; width: 100px; border-radius: 20%;
+                " src="data:image/<%=experience.img.contentType%>;base64,
+                        <%=experience.img.data.toString('base64')%>">
+
+                    <div style="padding-left: 20px;">
+                        <p style="font-size:25px">
+                            <%=experience.name%>
+                        </p>
+                        <p style="font-size: 14px;">(<%=experience.branch%> - <%=experience.year%>)</p>
+                        </br>
+                        <p style="display: -webkit-box;
+                        -webkit-line-clamp: 1;
+                        -webkit-box-orient: vertical;  
+                        overflow: hidden;">
+                            <%=experience.exp%>
+                        </p>
+                    </div>
+
+                </div>
+
+
+            </button>
+            <div class="details">
+                <p>
+                    <%=experience.exp%>
+                </p>
+            </div>
+            <% }) %>
+
+                <% } else { %>
+                    <p>There are no experiences to display...</p>
+                    <% } %>
+                        <!-- </div> -->
+                        <script>
+                            var coll = document.getElementsByClassName("collapsible");
+                            var i;
+
+                            for (i = 0; i < coll.length; i++) {
+                                coll[i].addEventListener("click", function () {
+                                    this.classList.toggle("active");
+                                    var content = this.nextElementSibling;
+                                    if (content.style.display === "block") {
+                                        content.style.display = "none";
+                                    } else {
+                                        content.style.display = "block";
+                                    }
+                                });
+                            }
+                        </script>
+
+                        <button onclick="document.getElementById('id01').style.display='block'" class="btn">ADD NEW EXPERIENCE</button>
+
+                        <div id="id01" class="modal">
+                            <span onclick="document.getElementById('id01').style.display='none'" class="close"
+                                title="Close Modal">&times;</span>
+                            <form class="modal-content" method="POST" enctype="multipart/form-data">
+                                <div class="container">
+                                    <h2>Add new experience</h2>
+                                    <label for="name">Name:</label>
+                                    <input type="text" id="name" name="name" required>
+                                    <label for="branch">Branch:</label>
+                                    <input type="text" id="branch" name="branch" required>
+                                    <label for="year">Year(in YYYY format):</label>
+                                    <input type="text" id="year" name="year" required>
+                                    <label for="exp">About your experience:</label>
+                                    <textarea type="text" id="exp" name="exp" required> </textarea>
+                                    <input type="file" accept="image/*" name="image" id="image"
+                                        onchange="loadFile(event)" style="display: none;"></p>
+                                    <label for="image" style="cursor: pointer; color: crimson;">UPLOAD
+                                        IMAGE</label>
+                                    <p><img id="output" width="200" /></p>
+
+                                    <script>
+                                        var loadFile = function (event) {
+                                            var image = document.getElementById('output');
+                                            image.src = URL.createObjectURL(event.target.files[0]);
+                                        };
+                                    </script>
+                                    <!-- <label for="topic">Topic:</label>
+                <input type="text" id="topic" name="topic" required> -->
+                                    <!-- <div class="clearfix"> -->
+                                    <!-- <button type="button" onclick="document.getElementById('id01').style.display='none'"
+                        class="btn">Cancel</button> -->
+                                    <button type="submit" class="btn">CREATE</button>
+                                    <!-- </div> -->
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- <script> -->
+                        <!-- Get the modal
+        var modal = document.getElementById('id01');
+
+        When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        } -->
+                        <!-- </script> -->
+                        <%- include('partials/footer'); -%>

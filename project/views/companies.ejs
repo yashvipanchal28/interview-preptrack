@@ -1,0 +1,59 @@
+<%- include('partials/header'); -%>
+
+    <!-- <a href="/topics/create" class="btn">Create New Question</a> -->
+    <!-- <button onclick="document.getElementById('id01').style.display='block'" class="btn">Create New Question</button>
+
+    <div id="id01" class="modal">
+        <span onclick="document.getElementById('id01').style.display='none'" class="close"
+            title="Close Modal">&times;</span>
+        <form class="modal-content" action="/topics" method="POST">
+            <div class="container">
+                <h2>Add new Question</h2>
+                <label for="name">Question name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="link">Question link:</label>
+                <input type="text" id="link" name="link" required>
+                <label for="topic">Topic:</label>
+                <input type="text" id="topic" name="topic" required>
+                <div class="clearfix"> -->
+    <!-- <button type="button" onclick="document.getElementById('id01').style.display='none'"
+                        class="btn">Cancel</button> -->
+    <!-- <button type="submit" class="btn">Create</button> -->
+    <!-- </div> -->
+    <!-- </div>
+        </form>
+    </div> -->
+
+    <!-- <script> -->
+    <!-- // Get the modal
+        var modal = document.getElementById('id01');
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        } -->
+    <!-- </script> -->
+    <!-- <p> -->
+    <h2>&nbsp;&nbsp;&nbsp;&nbsp;Companies</h2>
+    <!-- </p> -->
+    </br>
+    <% if (companies.length> 0) { %>
+        <div class="l-container">
+            <% companies.forEach(company=> { %>
+                <a class="single" href="/companies/<%= company._id %>">
+                    <!-- <h3 class="list"> -->
+                    <div class="b-game-card">
+                        <div class="b-game-card__cover" style="background-image: url(
+                            <%=company.url%>
+                            );">
+                        </div>
+                    </div>
+
+                    <% }) %>
+        </div>
+        <% } else { %>
+            <p>There are no companies to display...</p>
+            <% } %>
+                <%- include('partials/footer'); -%>
